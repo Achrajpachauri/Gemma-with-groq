@@ -17,7 +17,7 @@ load_dotenv()
 ##load groq and google api key
 
 groq_api = os.getenv("GROQ_API_KEY")
-google_api_key = os.getenv("GOOGLE_API_KEY")
+os.environ["GOOGLE_API_KEY"]=os.getenv("GOOGLE_API_KEY")
 
 #print(groq_api)
 
@@ -43,7 +43,7 @@ def vector_embeddings():
         st.session_state.loader = PyPDFDirectoryLoader(r"C:\\Users\\achra\\OneDrive\\Desktop\\Generative AI\\Generative AI Projects\\Gemma with groq\\US-Census")
         st.session_state.docs = st.session_state.loader.load()  ## load all the document 
         st.session_state.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000,chunk_overlap=200)
-        st.session_state.final_documents = st.session_state.text_splitter.split_documents(st.session_state.docs)
+        st.session_state.final_documents = st.session_state.text_splitter.split_documents(st.session_state.docs[:20])
         st.session_state.vectors = FAISS.from_documents(st.session_state.final_documents,st.session_state.embeddings)
 
 
@@ -56,7 +56,7 @@ if st.button('Creating vector store'):
 
 if prompt1:
     document_chain = create_stuff_documents_chain(llm,prompt)
-    retriever = st.session_state.vectors.as_retreiver()
+    retriever = st.session_state.vectors.as_retriever()
     retriever_chain = create_retrieval_chain(retriever,document_chain)
     
     start = time.process_time()
